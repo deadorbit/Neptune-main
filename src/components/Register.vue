@@ -80,8 +80,6 @@ export default {
         console.log('Generated key pair successfully:', userKeyPair);
 
         // Store the public key on the server
-        await sendPublicKeyToServer(userKeyPair.publicKey);
-
         return userKeyPair;
       } catch (error) {
         loading.value = false;
@@ -90,24 +88,6 @@ export default {
       }
     };
 
-    const sendPublicKeyToServer = async (publicKey) => {
-      try {
-        // Make an HTTP request to send the public key to the server
-        const response = await fetch('http://localhost:3000/storePublicKey', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId: 'replace-with-authenticated-user-id', publicKey }),
-        });
-
-        if (!response.ok) {
-          console.error('Error storing public key on the server.');
-        }
-      } catch (error) {
-        console.error('Network error:', error);
-      }
-    };
 
     const togglePasswordVisibility = () => {
       passwordVisibility.value = !passwordVisibility.value;
