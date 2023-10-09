@@ -33,8 +33,9 @@ export default {
   },
   data() {
     return {
-      profilePictureUrl: 'path-to-profile-picture',
-      userName: 'John Doe',
+      // Initialize profilePictureUrl and userName with default values
+      profilePictureUrl: 'img/default_pfp.jpg',
+      userName: 'Loading...', // Display a loading message initially
       contacts: [
         { id: 1, name: 'User 1', profilePictureUrl: 'path-to-profile-picture' },
         { id: 2, name: 'User 2', profilePictureUrl: 'path-to-profile-picture' },
@@ -44,6 +45,19 @@ export default {
     };
   },
   methods: {
+    async fetchUserProfile() {
+      // Check if a user is currently authenticated
+      if (auth.currentUser) {
+        try {
+          // Fetch user's display name and photo URL from Firebase Authentication
+          const user = auth.currentUser;
+          this.userName = user.displayName || 'No Name';
+          this.profilePictureUrl = user.photoURL || 'img/default_pfp.jpg';
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+        }
+      }
+    },
     openChat(contact) {
       // Set the selectedContact to the clicked contact
       this.selectedContact = contact;
@@ -58,10 +72,14 @@ export default {
         console.error('Logout error:', error);
       });
     },
-
+  },
+  mounted() {
+    // Fetch user profile information when the component is mounted
+    this.fetchUserProfile();
   },
 };
 </script>
+
 
 <style scoped>
 .main-page {

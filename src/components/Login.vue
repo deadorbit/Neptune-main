@@ -1,11 +1,11 @@
 <template>
   <div>
-    <!-- Wrap the form fields in a form element -->
     <form @submit.prevent="login">
       <div class="header">
         <h4 style="color: white; font-size: 32px; font-weight: bold; font-family: 'Verdana', sans-serif;">Neptune</h4>
       </div>
       
+
       <label>Email:</label>
       <!-- Apply DOMPurify to sanitize the email input -->
       <input type="email" v-model="email" required>
@@ -16,10 +16,11 @@
 
       <div class="bottomForm">
         <p v-if="!loggedIn">Don't have an account? <button @click="navigateToRegister" class="btn btn-link">Register</button></p>
-        <!-- Mark the "Login" button as type="submit" -->
         <button type="submit" class="btn btn-primary mt-3">Login</button>
       </div>
     </form>
+
+    <!-- Display email and password for debugging purposes (remove in production) -->
   </div>
 </template>
 

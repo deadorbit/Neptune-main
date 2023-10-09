@@ -2,9 +2,10 @@
   <div class="container mt-4">
     <!-- Conditionally render components based on data properties -->
     <Login v-if="showLogin" @loggedIn="handleLoggedIn"></Login>
-    <Register v-if="showRegister" @loggedIn="handleLoggedIn"></Register>
+    <Register v-if="showRegister" @registered="handleRegistered"></Register>
+    <AccountSetup v-if="showAccountSetup" @accountSetupComplete="handleAccountSetupComplete"></AccountSetup>
+    <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete"></FinalAccountSetup>
     <MainPage v-if="showMainPage" @logout="handleLogout"></MainPage>
-
   </div>
 </template>
 
@@ -12,65 +13,96 @@
 import { defineComponent, provide, ref } from 'vue';
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
+import AccountSetup from './components/AccountSetup.vue';
+import FinalAccountSetup from './components/FinalAccountSetup.vue';
 import MainPage from './components/MainPage.vue';
 
 export default defineComponent({
   components: {
     Login,
     Register,
+    AccountSetup, 
+    FinalAccountSetup,
     MainPage,
   },
   setup() {
     const showLogin = ref(true);
     const showRegister = ref(false);
+    const showAccountSetup = ref(false);
+    const showFinalAccountSetup = ref(false);
     const showMainPage = ref(false);
 
-    const handleLoggedIn = (loggedIn) => {
-      showMainPage.value = loggedIn;
-      showLogin.value = !loggedIn;
-      showRegister.value = !loggedIn;
+    const handleLoggedIn = () => {
+      showLogin.value = false;
+      showRegister.value = false;
+      showAccountSetup.value = false;
+      showMainPage.value = true;
+      showFinalAccountSetup.value = false;
     };
 
-    const handleRegistered = (registered) => {
-      showMainPage.value = registered;
-      showLogin.value = !registered;
-      showRegister.value = !registered;
+    const handleRegistered = () => {
+      showLogin.value = false;
+      showRegister.value = false;
+      showAccountSetup.value = true;
+      showMainPage.value = false;
+      showFinalAccountSetup.value = false;
+    };
+
+    const handleAccountSetupComplete = () => {
+      showLogin.value = false;
+      showRegister.value = false;
+      showAccountSetup.value = false;
+      showMainPage.value = false;
+      showFinalAccountSetup.value = true;
+    };
+
+    const handleFinalAccountSetupComplete = () => {
+      showLogin.value = false;
+      showRegister.value = false;
+      showAccountSetup.value = false;
+      showMainPage.value = true;
+      showFinalAccountSetup.value = false;
     };
 
     const handleLogout = () => {
-      // Perform logout actions, e.g., clear user session or tokens
-      // Then update the component state
-      showMainPage.value = false;
       showLogin.value = true;
       showRegister.value = false;
+      showAccountSetup.value = false;
+      showMainPage.value = false;
+      showFinalAccountSetup.value = false;
     };
 
     const handleNavigate = (page) => {
-      if (page === 'login') {
-        showLogin.value = true;
-        showRegister.value = false;
-        showMainPage.value = false;
-      } else if (page === 'register') {
-        showLogin.value = false;
-        showRegister.value = true;
-        showMainPage.value = false;
-      }
-    };
+    if (page === 'login') {
+      showLogin.value = true;
+      showRegister.value = false;
+      showMainPage.value = false;
+    } else if (page === 'register') {
+      showLogin.value = false;
+      showRegister.value = true;
+      showMainPage.value = false;
+    }
+  };
 
-    provide('handleNavigate', handleNavigate);
+  provide('handleNavigate', handleNavigate);
+
     provide('handleLoggedIn', handleLoggedIn);
     provide('handleRegistered', handleRegistered);
+    provide('handleAccountSetupComplete', handleAccountSetupComplete);
+    provide('handleFinalAccountSetupComplete', handleFinalAccountSetupComplete);
+    provide('handleLogout', handleLogout);
 
     return {
       showLogin,
       showRegister,
+      showAccountSetup,
+      showFinalAccountSetup,
       showMainPage,
-      handleLogout, 
-
     };
   },
 });
 </script>
+
 
 <style>
 #app {
@@ -84,12 +116,15 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #1a3d60;
-  background: #1f2d45; /* Fallback background color */
-  background-image: url('/public/img/login_register_background.jpg'); /* Background image path */
+  background: #1f2d45;
+  /* Fallback background color */
+  background-image: url('/public/img/login_register_background.jpg');
+  /* Background image path */
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  opacity: .75; /* Adjust the opacity value (0.0 to 1.0) as needed */
+  opacity: .75;
+  /* Adjust the opacity value (0.0 to 1.0) as needed */
 }
 
 h1 {

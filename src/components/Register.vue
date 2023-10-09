@@ -1,10 +1,12 @@
 <template>
   <div>
-    <form @submit.prevent="register" @keyup.enter="register">
+    <!-- Wrap the form fields in a form element -->
+    <form @submit.prevent="register" @keyup.enter="submitForm">
       <div class="header">
         <h4 style="color: white; font-size: 32px; font-weight: bold; font-family: 'Verdana', sans-serif;">Neptune</h4>
       </div>
-      <label>Email:</label> <!-- Updated label to specify Email -->
+      <label>Email:</label>
+      <!-- Updated label to specify Email -->
       <input type="email" v-model="email" required> <!-- Use type="email" for email validation -->
 
       <label>Password:</label>
@@ -23,7 +25,8 @@
 
       <div class="bottomForm">
         <p>Already have an account? <button @click="navigateToLogin" class="btn btn-link">Login</button></p>
-        <button :disabled="loading" type="submit" class="btn btn-primary mt-3">Register</button>
+        <!-- Mark the "Register" button as type="submit" and add a name attribute -->
+        <button :disabled="loading" type="submit" class="btn btn-primary mt-3" name="registerButton">Register</button>
       </div>
     </form>
   </div>
@@ -122,7 +125,6 @@ export default {
         }
         // Generate an asymmetric key pair
 
-
         const userKeyPair = await generateKeyPair();
 
         const sanitizedEmail = DOMPurify.sanitize(email.value);
@@ -151,10 +153,17 @@ export default {
       }
     };
 
-
     const navigateToLogin = () => {
       // Trigger a page transition to the login page
       handleNavigate('login');
+    };
+
+    const submitForm = (event) => {
+      // Check the name attribute of the submitted button
+      if (event.submitter.name === 'registerButton') {
+        // Manually trigger the form submission for the "Register" button
+        event.target.submit();
+      }
     };
 
     return {
@@ -165,7 +174,7 @@ export default {
       register,
       togglePasswordVisibility,
       navigateToLogin,
-      
+      submitForm, // Add the submitForm method
     };
   },
 };
@@ -179,20 +188,15 @@ export default {
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  user-select: none;
-  /* Prevent text selection when clicking */
-  color: #555;
-  /* Adjust color as needed */
-  font-size: 20px;
-  /* Adjust font size as needed */
+  user-select: none; /* Prevent text selection when clicking */
+  color: #555; /* Adjust color as needed */
+  font-size: 20px; /* Adjust font size as needed */
 }
 
 /* Style the eye icon as a button */
 .toggle-password:hover {
-  color: #333;
-  /* Change color on hover */
+  color: #333; /* Change color on hover */
 }
-
 form {
   max-width: 500px;
   margin: 185px auto;
@@ -249,8 +253,7 @@ select {
 .header {
   display: flex;
   justify-content: center;
-  font-family: 'Roboto', sans-serif;
-  /* Apply the "Roboto" font */
+  font-family: 'Roboto', sans-serif; /* Apply the "Roboto" font */
 }
 
 /* Loading indicator style */
@@ -259,4 +262,5 @@ select {
   color: #1874a5;
   /* Oceanic blue */
   margin-top: 10px;
-}</style>
+}
+</style>

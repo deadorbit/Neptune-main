@@ -2,6 +2,9 @@
   <div class="header">
     <div class="profile-info">
       <div class="d-flex align-items-center">
+        
+
+
         <img :src="profilePictureUrl" alt="Profile Picture" class="profile-picture" />
         <span class="profile-name">{{ userName }}</span>
         <div class="settings-icon" @click="toggleDropdown">

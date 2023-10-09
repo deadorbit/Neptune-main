@@ -12,8 +12,6 @@ npm install dompurify
 npm install body-parser
 npm install cors
 npm install firebase-admin
-npm install --save font-awesome
-npm install -g firebase-tools
 
 ```
 
