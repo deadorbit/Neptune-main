@@ -8,8 +8,9 @@
       <ContactList :contacts="contacts" @open-chat="openChat" />
     </div>
     <div class="spacer"></div>
-    <!-- Include the MessagingSession component -->
-    <MessagingSession v-if="selectedContact" :contact="selectedContact" />
+    <div class="messaging-session">
+      <MessagingSession v-if="selectedContact" :contact="selectedContact" />
+    </div>
   </div>
 </template>
 
@@ -77,9 +78,15 @@ export default {
   mounted() {
     // Fetch user profile information when the component is mounted
     this.fetchUserProfile();
+
+    // Set the selectedContact to the first contact in the array
+    if (this.contacts.length > 0) {
+      this.selectedContact = this.contacts[0];
+    }
   },
 };
 </script>
+
 
 <style scoped>
 .main-page {
@@ -111,10 +118,10 @@ export default {
   /* Push content to the top */
 }
 
-.messaging-area {
-  flex: 1;
+.messaging-session {
+  flex: 2; /* You can adjust the flex value as needed to make it larger */
   overflow-y: auto;
-  background-color: #fff;
+  background-color: #343434;
 }
 
 /* Adjust styling as needed for the chat area */

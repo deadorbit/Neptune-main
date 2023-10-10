@@ -1,6 +1,6 @@
 <template>
   <div class="messaging-session">
-    <h2>Chat with {{ contact.name }}</h2>
+    <h2 style="color: white; font-family: Verdana, sans-serif; font-weight: bold;">{{ contact.name }}</h2>
 
     <div class="messages">
       <div
@@ -68,13 +68,10 @@ export default {
 
 <style scoped>
 .messaging-session {
-  padding: 20px;
-  background-color: #f5f5f5;
+  padding: 15px;
+  background-color: #525252;
   flex: 1;
 }
-
-
-
 
 .messages {
   display: flex;
@@ -82,7 +79,19 @@ export default {
   gap: 10px;
   padding: 10px;
   overflow-y: auto;
-  height: 70%;
+  /* Adjust the height to leave more space for the message input */
+  height: 10%; /* Lowered from 70% */
+}
+
+.message-input {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background-color: 343434;
+  /* Adjust the flex property to push it lower on the screen */
+  flex: 1; /* Added this line */
 }
 
 .message {
@@ -113,25 +122,17 @@ export default {
   color: #777;
 }
 
-.message-input {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  border-top: 1px solid #ddd;
-  background-color: white;
-}
-
 .message-input input {
   flex: 1;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  
 }
 
 .message-input button {
-  background-color: #343434;
-  color: white;
+  background-color: white;
+  color: #343434;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
