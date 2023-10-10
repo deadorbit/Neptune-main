@@ -2,16 +2,13 @@
   <div class="header">
     <div class="profile-info">
       <div class="d-flex align-items-center">
-        
-
-
         <img :src="profilePictureUrl" alt="Profile Picture" class="profile-picture" />
         <span class="profile-name">{{ userName }}</span>
-        <div class="settings-icon" @click="toggleDropdown">
-          <i class="fa fa-cog"></i>
-          <div v-if="showDropdown" class="dropdown-menu">
-            <a @click="goToSettings" class="dropdown-item">Profile Settings</a>
-          </div>
+      </div>
+      <div class="settings-icon" @click="toggleDropdown">
+        <i class="fa fa-cog"></i>
+        <div v-if="showDropdown" class="dropdown-menu">
+          <a @click="goToSettings" class="dropdown-item">Profile Settings</a>
         </div>
       </div>
     </div>
@@ -48,7 +45,7 @@ export default {
     },
     logout() {
       // Implement logout logic
-      this.$emit('logout')
+      this.$emit('logout');
       console.log('Logout clicked');
     },
     openChat(contact) {
@@ -60,43 +57,44 @@ export default {
 </script>
 
 <style scoped>
-/* Your existing CSS styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Vertically center items */
+  background-color: #333;
+  color: white;
+  padding: 30px;
+}
+
 .profile-info {
   display: flex;
-  align-items: center;
-  margin-right: 40px;
+  align-items: flex-start; /* Align items at the top */
+  flex-direction: column; /* Stack items vertically */
 }
 
 .profile-picture {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  margin-right: 20px;
-  margin-left: 10px;
-  margin-top: 10px;
-
+  margin-right: 10px;
 }
 
 .profile-name {
   font-weight: bold;
-  margin-right: 20px;
+  margin-right: 0px;
 }
 
 .settings-icon {
-  font-size: 24px;
+  font-size: 30px;
   cursor: pointer;
   display: flex;
   align-items: center;
   position: relative;
+  margin-top: 750px;
+  margin-left: -15px; /* Add margin to separate from profile name */
 }
 
-.dropdown-menu {
-  position: absolute;
-  background-color: white;
-  display: none;
-  right: .5;
-  top: calc(100% + 5px);
-}
+
 
 .settings-icon:hover .dropdown-menu {
   display: block;
@@ -120,9 +118,10 @@ export default {
   font-size: 16px;
   margin-bottom: 10px; /* Add space between network title and contact list */
 }
+
 .logout-button {
-  margin-left: 15px;
-  margin-top: 10px;
-  width: 90%; /* Add margin to separate the button from the profile name */
+  margin-left: 60px;
+  margin-top:  -30px; /* Add margin to separate from gear icon */
+  width: 90%;
 }
 </style>

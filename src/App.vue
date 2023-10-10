@@ -3,8 +3,9 @@
     <!-- Conditionally render components based on data properties -->
     <Login v-if="showLogin" @loggedIn="handleLoggedIn"></Login>
     <Register v-if="showRegister" @registered="handleRegistered"></Register>
-    <AccountSetup v-if="showAccountSetup" @accountSetupComplete="handleAccountSetupComplete"></AccountSetup>
-    <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete"></FinalAccountSetup>
+    <AccountSetup v-if="showAccountSetup" @continueToFinalAccountSetup="handleContinueToFinalAccountSetup"></AccountSetup>
+    <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete">
+    </FinalAccountSetup>
     <MainPage v-if="showMainPage" @logout="handleLogout"></MainPage>
   </div>
 </template>
@@ -21,7 +22,7 @@ export default defineComponent({
   components: {
     Login,
     Register,
-    AccountSetup, 
+    AccountSetup,
     FinalAccountSetup,
     MainPage,
   },
@@ -48,7 +49,8 @@ export default defineComponent({
       showFinalAccountSetup.value = false;
     };
 
-    const handleAccountSetupComplete = () => {
+    const handleContinueToFinalAccountSetup = () => {
+      // Handle the event when the "Continue" button in Account Setup is clicked
       showLogin.value = false;
       showRegister.value = false;
       showAccountSetup.value = false;
@@ -56,7 +58,7 @@ export default defineComponent({
       showFinalAccountSetup.value = true;
     };
 
-    const handleFinalAccountSetupComplete = () => {
+    const handleAccountSetupComplete = () => {
       showLogin.value = false;
       showRegister.value = false;
       showAccountSetup.value = false;
@@ -73,24 +75,23 @@ export default defineComponent({
     };
 
     const handleNavigate = (page) => {
-    if (page === 'login') {
-      showLogin.value = true;
-      showRegister.value = false;
-      showMainPage.value = false;
-    } else if (page === 'register') {
-      showLogin.value = false;
-      showRegister.value = true;
-      showMainPage.value = false;
-    }
-  };
+      if (page === 'login') {
+        showLogin.value = true;
+        showRegister.value = false;
+        showMainPage.value = false;
+      } else if (page === 'register') {
+        showLogin.value = false;
+        showRegister.value = true;
+        showMainPage.value = false;
+      }
+    };
 
-  provide('handleNavigate', handleNavigate);
-
+    provide('handleNavigate', handleNavigate);
     provide('handleLoggedIn', handleLoggedIn);
     provide('handleRegistered', handleRegistered);
     provide('handleAccountSetupComplete', handleAccountSetupComplete);
-    provide('handleFinalAccountSetupComplete', handleFinalAccountSetupComplete);
     provide('handleLogout', handleLogout);
+    provide('handleContinueToFinalAccountSetup', handleContinueToFinalAccountSetup);
 
     return {
       showLogin,

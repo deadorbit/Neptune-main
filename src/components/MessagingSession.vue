@@ -1,13 +1,68 @@
 <template>
   <div class="messaging-session">
     <h2>Chat with {{ contact.name }}</h2>
-    <!-- Add your messaging interface here -->
+
+    <div class="messages">
+      <div
+        v-for="message in messages"
+        :key="message.id"
+        :class="messageClass(message)"
+        class="message"
+      >
+        <div class="message-text">{{ message.text }}</div>
+        <div class="message-timestamp">{{ formatTime(message.timestamp) }}</div>
+      </div>
+    </div>
+
+    <div class="message-input">
+      <input
+        v-model="newMessage"
+        @keyup.enter="sendMessage"
+        placeholder="Type your message..."
+      />
+      <button @click="sendMessage">Send</button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   props: ['contact'],
+  data() {
+    return {
+      newMessage: '',
+      messages: [
+        // Sample messages, replace with your own data
+        { id: 1, text: 'Hi there!', sender: 'contact', timestamp: new Date() },
+        { id: 2, text: 'Hello!', sender: 'user', timestamp: new Date() },
+      ],
+    };
+  },
+  methods: {
+    sendMessage() {
+      if (this.newMessage.trim() === '') {
+        return; // Don't send empty messages
+      }
+      const message = {
+        id: Date.now(),
+        text: this.newMessage.trim(),
+        sender: 'user', // You can change this to 'contact' for received messages
+        timestamp: new Date(),
+      };
+      this.messages.push(message);
+      this.newMessage = '';
+    },
+    messageClass(message) {
+      return {
+        'user-message': message.sender === 'user',
+        'contact-message': message.sender === 'contact',
+      };
+    },
+    formatTime(timestamp) {
+      const options = { hour: 'numeric', minute: 'numeric' };
+      return new Date(timestamp).toLocaleTimeString(undefined, options);
+    },
+  },
 };
 </script>
 
@@ -16,5 +71,75 @@ export default {
   padding: 20px;
   background-color: #f5f5f5;
   flex: 1;
+}
+
+
+
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  overflow-y: auto;
+  height: 70%;
+}
+
+.message {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.user-message {
+  align-self: flex-end;
+  background-color: #343434;
+  color: white;
+}
+
+.contact-message {
+  align-self: flex-start;
+  background-color: #1fb9e0;
+  color: white;
+}
+
+.message-text {
+  word-wrap: break-word;
+}
+
+.message-timestamp {
+  text-align: right;
+  font-size: 12px;
+  color: #777;
+}
+
+.message-input {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background-color: white;
+}
+
+.message-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.message-input button {
+  background-color: #343434;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.message-input button:hover {
+  background-color: #343434;
 }
 </style>

@@ -1,19 +1,15 @@
 <template>
   <div class="main-page">
-    <div class="header">
-      <Header :profilePictureUrl="profilePictureUrl" :userName="userName" @logout="logout" />
-      <div class="search-and-contacts">
-        <SearchBar />
-
-        <div class="network-title">Your Network</div>
-        <ContactList :contacts="contacts" @open-chat="openChat" />
-      </div>
-      <!-- Add a spacer to push content to the top -->
-      <div class="spacer"></div>
+    <Header :profilePictureUrl="profilePictureUrl" :userName="userName" @logout="logout" />
+    <div class="search-and-contacts">
+      <!-- Pass the 'contacts' prop to the SearchBar component -->
+      <SearchBar :contacts="contacts" @search-results="updateSearchResults" />
+      <div class="network-title">Your Network</div>
+      <ContactList :contacts="contacts" @open-chat="openChat" />
     </div>
-    <div class="messaging-area">
-      <MessagingSession v-if="selectedContact" :contact="selectedContact" />
-    </div>
+    <div class="spacer"></div>
+    <!-- Include the MessagingSession component -->
+    <MessagingSession v-if="selectedContact" :contact="selectedContact" />
   </div>
 </template>
 
@@ -21,7 +17,7 @@
 import Header from './MainProfileHeader.vue';
 import SearchBar from './MainUserSearch.vue';
 import ContactList from './MainContactList.vue';
-import MessagingSession from './MessagingSession.vue';
+import MessagingSession from './MessagingSession.vue'; // Ensure correct import path
 import { auth } from '@/main';
 
 export default {
@@ -41,7 +37,7 @@ export default {
         { id: 2, name: 'User 2', profilePictureUrl: 'path-to-profile-picture' },
         // Add more contacts as needed
       ],
-      selectedContact: null,
+      selectedContact: null, // Ensure that selectedContact is initialized
     };
   },
   methods: {
@@ -58,6 +54,11 @@ export default {
         }
       }
     },
+
+    updateSearchResults(results) {
+      this.searchResults = results;
+    },
+
     openChat(contact) {
       // Set the selectedContact to the clicked contact
       this.selectedContact = contact;
@@ -79,7 +80,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .main-page {

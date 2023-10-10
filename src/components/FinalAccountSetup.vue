@@ -21,7 +21,8 @@
   </template>
   
   <script>
-  import { getDatabase, ref as dbRef, get } from "firebase/database";
+  import { getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
+  import { getDatabase, ref, update, get } from "firebase/database";
   import { getAuth } from "firebase/auth";
   
   export default {
@@ -29,6 +30,7 @@
       return {
         username: "",
         profilePictureUrl: "", // Initialize with an empty string
+        uploading: false,
       };
     },
     async created() {
@@ -45,7 +47,7 @@
       async getUsernameFromDatabase(uid) {
         try {
           const db = getDatabase();
-          const userRef = dbRef(db, `users/${uid}`);
+          const userRef = ref(db, `users/${uid}`);
           const snapshot = await get(userRef);
           if (snapshot.exists()) {
             return snapshot.val().username;
@@ -57,7 +59,49 @@
           return null;
         }
       },
-      // ... (other methods as needed) ...
+  
+      async handleFileChange(event) {
+        // Handle the file selection
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+          this.uploading = true;
+          try {
+            const profilePictureUrl = await this.uploadProfilePicture(selectedFile);
+            this.profilePictureUrl = profilePictureUrl;
+          } catch (error) {
+            console.error("Error uploading profile picture:", error);
+          } finally {
+            this.uploading = false;
+          }
+        }
+      },
+  
+      async uploadProfilePicture(file) {
+        try {
+          // Create a reference to the storage location
+          const storage = getStorage();
+          const storageRef = storageRef(storage, `profilePictures/${file.name}`);
+  
+          // Upload the file
+          const snapshot = await uploadBytes(storageRef, file);
+  
+          // Get the download URL for the uploaded file
+          const downloadURL = await getDownloadURL(snapshot.ref);
+  
+          // Update the user's data with the profile picture URL
+          const user = getAuth().currentUser;
+          if (user) {
+            const db = getDatabase();
+            const userRef = ref(db, `users/${user.uid}`);
+            await update(userRef, { profilePictureUrl: downloadURL });
+          }
+  
+          return downloadURL;
+        } catch (error) {
+          console.error("Error uploading profile picture:", error);
+          throw error;
+        }
+      },
     },
   };
   </script>

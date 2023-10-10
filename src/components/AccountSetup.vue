@@ -11,7 +11,7 @@
                     <input type="text" id="username" v-model="username" :class="{ 'is-invalid': usernameError }" required />
                     <div v-if="usernameError" class="invalid-feedback">{{ usernameError }}</div>
                 </div>
-                <button type="submit" class="btn btn-primary">Continue</button>
+                <button type="submit" class="btn btn-primary" @click="submitForm">Continue</button>
             </form>
         </div>
     </div>
@@ -21,11 +21,11 @@
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref as dbRef, child, get, set } from 'firebase/database';
 
-
 export default {
     data() {
         return {
             usernameError: null,
+            username: '', // Add a data property to store the username
         };
     },
     methods: {
@@ -42,12 +42,15 @@ export default {
                 // Save the username to the user's account information
                 const user = getAuth().currentUser;
                 if (user) {
+                    try {
+                        await this.saveUsernameToDatabase(user.uid, this.username);
+                        this.$emit("continueToFinalAccountSetup");
+                    } catch (error) {
+                        console.error("Error saving username to database:", error);
+                    }
                     // Update the user's data in the Realtime Database
-                    await this.saveUsernameToDatabase(user.uid, this.username);
                 }
-
-                // Continue to the Final Account Setup step and pass the username as a prop
-                this.$emit("accountSetupComplete", this.username);
+                // Continue to the Final Account Setup step and emit the event
             }
         },
         async checkUsernameExists(username) {
@@ -66,20 +69,58 @@ export default {
         },
         async saveUsernameToDatabase(uid, username) {
             try {
+                // Firebase Realtime Database reference to 'users' node
                 const db = getDatabase();
                 const userRef = dbRef(db, `users/${uid}`);
+
+                // Update the user's data with the username
                 await set(userRef, {
                     username: username,
                     // Add other user data as needed
                 });
+
+                // Also, update the 'usernames' node to record that this username is taken
+                const usernamesRef = dbRef(db, 'usernames');
+                await set(child(usernamesRef, username), uid);
             } catch (error) {
                 console.error("Error saving username to database:", error);
                 // Handle the error, e.g., display an error message to the user
             }
         },
+
+        async getUsernameFromDatabase(uid) {
+            try {
+                const db = getDatabase();
+                const userRef = dbRef(db, `users/${uid}`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    return snapshot.val().username;
+                }
+                return null;
+            } catch (error) {
+                console.error("Error retrieving username from database:", error);
+                return null;
+            }
+        },
+
+        async continueToFinalAccountSetup() {
+            // Emit an event to notify the parent component to navigate to the final setup page
+            this.$emit("continueToFinalAccountSetup");
+        },
+    },
+    async created() {
+        // Retrieve the username from the user's account information
+        const user = getAuth().currentUser;
+        if (user) {
+            const username = await this.getUsernameFromDatabase(user.uid);
+            if (username) {
+                this.username = username;
+            }
+        }
     },
 };
 </script>
+
 
 
   

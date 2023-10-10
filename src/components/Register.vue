@@ -21,7 +21,7 @@
 
       <div v-if="loading" class="loading-indicator">
         Generating Key Pair...
-      </div>  
+      </div>
 
       <div class="bottomForm">
         <p>Already have an account? <button @click="navigateToLogin" class="btn btn-link">Login</button></p>
@@ -47,7 +47,7 @@ export default {
     const loading = ref(false);
     const passwordVisibility = ref(false);
     const handleNavigate = inject('handleNavigate');
-    const handleLoggedIn = inject('handleLoggedIn');
+    const handleRegistered = inject('handleRegistered');
     const auth = getAuth();
 
     const generateKeyPair = async () => {
@@ -64,23 +64,21 @@ export default {
         const privateKey = forge.pki.privateKeyToPem(keys.privateKey);
 
         console.log('publicKey', publicKey);
-        console.log('privateKey', privateKey);
 
-        if (!publicKey || !privateKey) {
-          console.error('Key pair generation returned empty keys.');
-          throw new Error('Key pair generation returned empty keys.');
+        if (!publicKey) {
+          console.error('Key pair generation returned an empty public key.');
+          throw new Error('Key pair generation returned an empty public key.');
         }
 
-        const userKeyPair = {
-          publicKey, // Send the public key to the server
-          privateKey,
-        };
         loading.value = false;
 
-        console.log('Generated key pair successfully:', userKeyPair);
+        console.log('Generated key pair successfully:', publicKey);
 
         // Store the public key on the server
-        return userKeyPair;
+        return {
+          publicKey, // Send the public key to the server
+          privateKey, // Keep the private key for local storage
+        };
       } catch (error) {
         loading.value = false;
         console.error('Key pair generation error:', error);
@@ -88,6 +86,12 @@ export default {
       }
     };
 
+    const savePrivateKeyLocally = (privateKey) => {
+      // You can implement your logic here to securely store the private key locally
+      // For example, you can use the Web Crypto API to store it in a secure key store.
+      // Here, we'll simply store it in local storage for demonstration purposes.
+      localStorage.setItem('privateKey', privateKey);
+    };
 
     const togglePasswordVisibility = () => {
       passwordVisibility.value = !passwordVisibility.value;
@@ -104,8 +108,10 @@ export default {
           return;
         }
         // Generate an asymmetric key pair
-
         const userKeyPair = await generateKeyPair();
+
+        // Store the private key securely on the user's device
+        savePrivateKeyLocally(userKeyPair.privateKey);
 
         const sanitizedEmail = DOMPurify.sanitize(email.value);
         const sanitizedPassword = DOMPurify.sanitize(password.value);
@@ -121,15 +127,10 @@ export default {
         });
 
         alert('Registration successful!');
-        handleLoggedIn(true);
+        handleRegistered(true);
       } catch (error) {
         console.error('Registration error:', error);
         alert(`Registration failed: ${error.message}`);
-        // You can choose to clear the password fields or not based on your preference
-        // username.value = '';
-        // email.value = '';
-        // password.value = '';
-        // confirmPassword.value = '';
       }
     };
 
