@@ -6,7 +6,6 @@
         <h4 style="color: white; font-size: 32px; font-weight: bold; font-family: 'Verdana', sans-serif;">Neptune</h4>
       </div>
       <label>Email:</label>
-      <!-- Updated label to specify Email -->
       <input type="email" v-model="email" required> <!-- Use type="email" for email validation -->
 
       <label>Password:</label>
@@ -31,6 +30,7 @@
     </form>
   </div>
 </template>
+
 
 <script>
 import { ref, inject } from 'vue';
@@ -74,6 +74,8 @@ export default {
 
         console.log('Generated key pair successfully:', publicKey);
 
+        
+
         // Store the public key on the server
         return {
           publicKey, // Send the public key to the server
@@ -87,10 +89,24 @@ export default {
     };
 
     const savePrivateKeyLocally = (privateKey) => {
-      // You can implement your logic here to securely store the private key locally
-      // For example, you can use the Web Crypto API to store it in a secure key store.
-      // Here, we'll simply store it in local storage for demonstration purposes.
-      localStorage.setItem('privateKey', privateKey);
+      try {
+        // Parse the PEM private key
+        const parsedPrivateKey = forge.pki.privateKeyFromPem(privateKey);
+
+        // Convert the private key to JWK format
+        const privateKeyJWK = {
+          kty: 'RSA',
+          n: forge.util.encode64(parsedPrivateKey.n.toBuffer()),
+          e: forge.util.encode64(parsedPrivateKey.e.toBuffer()),
+          d: forge.util.encode64(parsedPrivateKey.d.toBuffer()),
+        };
+
+        // Store the private key as a JWK in local storage
+        localStorage.setItem('privateKey', JSON.stringify(privateKeyJWK));
+      } catch (error) {
+        console.error('Error saving private key:', error);
+        // Handle the error as needed
+      }
     };
 
     const togglePasswordVisibility = () => {
@@ -155,7 +171,7 @@ export default {
       register,
       togglePasswordVisibility,
       navigateToLogin,
-      submitForm, // Add the submitForm method
+      submitForm, 
     };
   },
 };

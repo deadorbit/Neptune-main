@@ -3,7 +3,8 @@
     <!-- Conditionally render components based on data properties -->
     <Login v-if="showLogin" @loggedIn="handleLoggedIn"></Login>
     <Register v-if="showRegister" @registered="handleRegistered"></Register>
-    <AccountSetup v-if="showAccountSetup" @continueToFinalAccountSetup="handleContinueToFinalAccountSetup"></AccountSetup>
+    <AccountSetup v-if="showAccountSetup" @continueToFinalAccountSetup="handleContinueToFinalAccountSetup"
+      @usernameStored="handleUsernameStored"></AccountSetup>
     <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete">
     </FinalAccountSetup>
     <MainPage v-if="showMainPage" @logout="handleLogout"></MainPage>
@@ -28,50 +29,44 @@ export default defineComponent({
   },
   setup() {
     const showLogin = ref(true);
-    const showRegister = ref(false);
+    const showRegister = ref(false); // Start with the Register screen
     const showAccountSetup = ref(false);
     const showFinalAccountSetup = ref(false);
     const showMainPage = ref(false);
 
     const handleLoggedIn = () => {
       showLogin.value = false;
-      showRegister.value = false;
-      showAccountSetup.value = false;
       showMainPage.value = true;
-      showFinalAccountSetup.value = false;
     };
 
     const handleRegistered = () => {
-      showLogin.value = false;
       showRegister.value = false;
-      showAccountSetup.value = true;
-      showMainPage.value = false;
-      showFinalAccountSetup.value = false;
+      showAccountSetup.value = true; // Transition to the Account Setup screen
     };
 
     const handleContinueToFinalAccountSetup = () => {
-      // Handle the event when the "Continue" button in Account Setup is clicked
+      showAccountSetup.value = false;
+      showFinalAccountSetup.value = true;
+      showMainPage.value = false;
+      showLogin.value = false;
+      showRegister.value = false; // Transition to the Final Account Setup screen
+    };
+    const handleUsernameStored = () => {
+      showAccountSetup.value = false;
+      showFinalAccountSetup.value = true;
+      showMainPage.value = false;
       showLogin.value = false;
       showRegister.value = false;
-      showAccountSetup.value = false;
-      showMainPage.value = false;
-      showFinalAccountSetup.value = true;
     };
 
-    const handleAccountSetupComplete = () => {
-      showLogin.value = false;
-      showRegister.value = false;
-      showAccountSetup.value = false;
-      showMainPage.value = true;
+    const handleFinalAccountSetupComplete = () => {
       showFinalAccountSetup.value = false;
+      showMainPage.value = true;
     };
 
     const handleLogout = () => {
       showLogin.value = true;
-      showRegister.value = false;
-      showAccountSetup.value = false;
       showMainPage.value = false;
-      showFinalAccountSetup.value = false;
     };
 
     const handleNavigate = (page) => {
@@ -89,9 +84,10 @@ export default defineComponent({
     provide('handleNavigate', handleNavigate);
     provide('handleLoggedIn', handleLoggedIn);
     provide('handleRegistered', handleRegistered);
-    provide('handleAccountSetupComplete', handleAccountSetupComplete);
+    provide('handleFinalAccountSetupComplete', handleFinalAccountSetupComplete);
     provide('handleLogout', handleLogout);
     provide('handleContinueToFinalAccountSetup', handleContinueToFinalAccountSetup);
+    provide('handleUsernameStored', handleUsernameStored);
 
     return {
       showLogin,

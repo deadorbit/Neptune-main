@@ -4,7 +4,6 @@
       <div class="header">
         <h4 style="color: white; font-size: 32px; font-weight: bold; font-family: 'Verdana', sans-serif;">Neptune</h4>
       </div>
-      
 
       <label>Email:</label>
       <!-- Apply DOMPurify to sanitize the email input -->
