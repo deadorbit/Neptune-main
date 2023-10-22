@@ -1,12 +1,9 @@
 <template>
   <div class="container mt-4">
-    <!-- Conditionally render components based on data properties -->
     <Login v-if="showLogin" @loggedIn="handleLoggedIn"></Login>
     <Register v-if="showRegister" @registered="handleRegistered"></Register>
-    <AccountSetup v-if="showAccountSetup" @continueToFinalAccountSetup="handleContinueToFinalAccountSetup"
-      @usernameStored="handleUsernameStored"></AccountSetup>
-    <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete">
-    </FinalAccountSetup>
+    <AccountSetup v-if="showAccountSetup" @continueToFinalAccountSetup="handleContinueToFinalAccountSetup" @usernameStored="handleUsernameStored"></AccountSetup>
+    <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete"></FinalAccountSetup>
     <MainPage v-if="showMainPage" @logout="handleLogout"></MainPage>
   </div>
 </template>
@@ -18,6 +15,7 @@ import Register from './components/Register.vue';
 import AccountSetup from './components/AccountSetup.vue';
 import FinalAccountSetup from './components/FinalAccountSetup.vue';
 import MainPage from './components/MainPage.vue';
+import { getUser } from '@/userStore';
 
 export default defineComponent({
   components: {
@@ -33,6 +31,7 @@ export default defineComponent({
     const showAccountSetup = ref(false);
     const showFinalAccountSetup = ref(false);
     const showMainPage = ref(false);
+    const user = getUser();
 
     const handleLoggedIn = () => {
       showLogin.value = false;
@@ -88,7 +87,7 @@ export default defineComponent({
     provide('handleLogout', handleLogout);
     provide('handleContinueToFinalAccountSetup', handleContinueToFinalAccountSetup);
     provide('handleUsernameStored', handleUsernameStored);
-
+    provide('user', user);
     return {
       showLogin,
       showRegister,

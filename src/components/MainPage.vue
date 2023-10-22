@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <Header :profilePictureUrl="profilePictureUrl" :userName="userName" @logout="logout" />
+    <Header :profilePictureUrl="user.profilePictureUrl" :userName="user.userName" @logout="logout" />
     <div class="search-and-contacts">
       <!-- Pass the 'contacts' prop to the SearchBar component -->
       <SearchBar :contacts="contacts" @search-results="updateSearchResults" />
@@ -18,8 +18,9 @@
 import Header from './MainProfileHeader.vue';
 import SearchBar from './MainUserSearch.vue';
 import ContactList from './MainContactList.vue';
-import MessagingSession from './MessagingSession.vue'; // Ensure correct import path
+import MessagingSession from './MessagingSession.vue';
 import { auth } from '@/main';
+import { inject } from 'vue';
 
 export default {
   components: {
@@ -28,65 +29,39 @@ export default {
     ContactList,
     MessagingSession,
   },
-  data() {
-    return {
-      // Initialize profilePictureUrl and userName with default values
-      profilePictureUrl: 'img/default_pfp.jpg',
-      userName: 'Loading...', // Display a loading message initially
-      contacts: [
-        { id: 1, name: 'User 1', profilePictureUrl: 'path-to-profile-picture' },
-        { id: 2, name: 'User 2', profilePictureUrl: 'path-to-profile-picture' },
-        // Add more contacts as needed
-      ],
-      selectedContact: null, // Ensure that selectedContact is initialized
+  setup() {
+    const user = inject('user', { userName: 'Default User', profilePictureUrl: 'default.jpg' });
+
+    const contacts = [
+      { id: 1, name: 'User 1', profilePictureUrl: 'path-to-profile-picture' },
+      { id: 2, name: 'User 2', profilePictureUrl: 'path-to-profile-picture' },
+      // Add more contacts as needed
+    ];
+    let selectedContact = null;
+
+    const openChat = (contact) => {
+      selectedContact = contact;
     };
-  },
-  methods: {
-    async fetchUserProfile() {
-      // Check if a user is currently authenticated
-      if (auth.currentUser) {
-        try {
-          // Fetch user's display name and photo URL from Firebase Authentication
-          const user = auth.currentUser;
-          this.userName = user.displayName || 'No Name';
-          this.profilePictureUrl = user.photoURL || 'img/default_pfp.jpg';
-        } catch (error) {
-          console.error('Error fetching user profile:', error);
-        }
-      }
-    },
 
-    updateSearchResults(results) {
-      this.searchResults = results;
-    },
-
-    openChat(contact) {
-      // Set the selectedContact to the clicked contact
-      this.selectedContact = contact;
-    },
-
-    logout() {
-      // Sign out of Firebase
+    const logout = () => {
       auth.signOut().then(() => {
-        // Redirect the user to the login page
-        window.location.href = '/login'; // Replace '/login' with your login page URL
+        window.location.href = '/login';
       }).catch((error) => {
         console.error('Logout error:', error);
       });
-    },
-  },
-  mounted() {
-    // Fetch user profile information when the component is mounted
-    this.fetchUserProfile();
+    };
 
-    // Set the selectedContact to the first contact in the array
-    if (this.contacts.length > 0) {
-      this.selectedContact = this.contacts[0];
-    }
+    // Fetch user profile information when the component is mounted
+    return {
+      user,
+      contacts,
+      selectedContact,
+      openChat,
+      logout,
+    };
   },
 };
 </script>
-
 
 <style scoped>
 .main-page {
@@ -104,7 +79,6 @@ export default {
 .profile-info {
   display: flex;
   flex-direction: column;
-  /* Stack profile info vertically */
 }
 
 .search-and-contacts {
@@ -115,14 +89,11 @@ export default {
 
 .spacer {
   flex: 1;
-  /* Push content to the top */
 }
 
 .messaging-session {
-  flex: 2; /* You can adjust the flex value as needed to make it larger */
+  flex: 2;
   overflow-y: auto;
   background-color: #343434;
 }
-
-/* Adjust styling as needed for the chat area */
 </style>

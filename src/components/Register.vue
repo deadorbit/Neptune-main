@@ -6,6 +6,7 @@
         <h4 style="color: white; font-size: 32px; font-weight: bold; font-family: 'Verdana', sans-serif;">Neptune</h4>
       </div>
       <label>Email:</label>
+      <!-- Updated label to specify Email -->
       <input type="email" v-model="email" required> <!-- Use type="email" for email validation -->
 
       <label>Password:</label>
@@ -38,6 +39,7 @@ import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { getDatabase, ref as dbRef, set } from 'firebase/database';
 import DOMPurify from 'dompurify';
 import forge from 'node-forge';
+import { provideUser } from '@/userStore';
 
 export default {
   setup() {
@@ -155,6 +157,8 @@ export default {
       handleNavigate('login');
     };
 
+    
+
     const submitForm = (event) => {
       // Check the name attribute of the submitted button
       if (event.submitter.name === 'registerButton') {
@@ -163,6 +167,8 @@ export default {
       }
     };
 
+    provideUser();
+    
     return {
       email,
       password,

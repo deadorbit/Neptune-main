@@ -22,15 +22,15 @@
 <script>
 export default {
   props: {
-    userName: String,
+    userName: String, // Prop to receive the username
+    profilePictureUrl: String, // Prop to receive the profile picture URL
   },
   data() {
     return {
-      profilePictureUrl: 'img/default_pfp.jpg',
       showDropdown: false,
       contacts: [
-        { id: 1, name: 'User 1', profilePictureUrl: 'path-to-profile-picture' },
-        { id: 2, name: 'User 2', profilePictureUrl: 'path-to-profile-picture' },
+        { id: 1, name: 'Bob', profilePictureUrl: 'img/icons8-john-wick-96.png' },
+        { id: 2, name: 'Kate', profilePictureUrl: 'img/icons8-luigi-96.png' },
         // Add more contacts as needed
       ],
     };
