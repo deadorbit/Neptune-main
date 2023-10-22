@@ -15,7 +15,6 @@ import Register from './components/Register.vue';
 import AccountSetup from './components/AccountSetup.vue';
 import FinalAccountSetup from './components/FinalAccountSetup.vue';
 import MainPage from './components/MainPage.vue';
-import { getUser } from '@/userStore';
 
 export default defineComponent({
   components: {
@@ -31,7 +30,6 @@ export default defineComponent({
     const showAccountSetup = ref(false);
     const showFinalAccountSetup = ref(false);
     const showMainPage = ref(false);
-    const user = getUser();
 
     const handleLoggedIn = () => {
       showLogin.value = false;
@@ -87,7 +85,6 @@ export default defineComponent({
     provide('handleLogout', handleLogout);
     provide('handleContinueToFinalAccountSetup', handleContinueToFinalAccountSetup);
     provide('handleUsernameStored', handleUsernameStored);
-    provide('user', user);
     return {
       showLogin,
       showRegister,
