@@ -7,6 +7,7 @@ npm install
 npm install -g @vue/cli
 npm install bootstrap
 npm install firebase
+npm install -g firebase-tools
 npm install node-forge
 npm install dompurify
 npm install body-parser
