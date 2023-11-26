@@ -24,6 +24,7 @@
     "openpgp": "^5.10.2",
     "stream-browserify": "^3.0.0",
     "vue": "^3.3.4",
+    "@vue/composition-api": "^1.7.2",
     "vue-router": "^4.2.5",
     "vuex": "^4.1.0"
   },

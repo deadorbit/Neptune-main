@@ -16,6 +16,7 @@ import AccountSetup from './components/AccountSetup.vue';
 import FinalAccountSetup from './components/FinalAccountSetup.vue';
 import MainPage from './components/MainPage.vue';
 
+
 export default defineComponent({
   components: {
     Login,
