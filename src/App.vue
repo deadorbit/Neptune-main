@@ -5,6 +5,7 @@
     <AccountSetup v-if="showAccountSetup" @continueToFinalAccountSetup="handleContinueToFinalAccountSetup" @usernameStored="handleUsernameStored"></AccountSetup>
     <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete"></FinalAccountSetup>
     <MainPage v-if="showMainPage" @logout="handleLogout"></MainPage>
+    <HomePage>HomePage</HomePage>
   </div>
 </template>
 
@@ -15,7 +16,7 @@ import Register from './components/Register.vue';
 import AccountSetup from './components/AccountSetup.vue';
 import FinalAccountSetup from './components/FinalAccountSetup.vue';
 import MainPage from './components/MainPage.vue';
-
+import HomePage from './components/HomePage.vue';
 
 export default defineComponent({
   components: {
@@ -24,9 +25,10 @@ export default defineComponent({
     AccountSetup,
     FinalAccountSetup,
     MainPage,
+    HomePage,
   },
   setup() {
-    const showLogin = ref(true);
+    const showLogin = ref(false);
     const showRegister = ref(false); // Start with the Register screen
     const showAccountSetup = ref(false);
     const showFinalAccountSetup = ref(false);

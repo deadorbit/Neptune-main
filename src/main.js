@@ -22,16 +22,12 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
 // Create a Firestore instance
-const firestore = getFirestore(firebaseApp);
-
+const db = getFirestore(firebaseApp);
 const vueApp = createApp(App)
 
 // Make Firestore available globally within Vue app
-vueApp.config.globalProperties.$firebase = {
-  auth,
-  firestore,
-};
+vueApp.config.globalProperties.$db = db
 
 vueApp.provide('auth', auth).mount('#app');
 
-export default vueApp;
+export { auth };

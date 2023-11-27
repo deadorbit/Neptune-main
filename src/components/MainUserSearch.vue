@@ -1,68 +1,68 @@
 <template>
-  <div>
-    <input v-model="searchQuery" placeholder="Search users" @input="debouncedSearchUsers" />
-    <ul v-if="searchResults.length > 0" class="search-results">
-      <li v-for="user in searchResults" :key="user.id" @click="openChat(user)">
-        {{ user.name }}
-      </li>
-    </ul>
-    <p v-else>No users found.</p>
+  <div class="search-bar">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search for users..."
+      v-model="searchQuery"
+      @input="searchUsers"
+    />
+    <div class="search-results" v-show="showResults">
+      <ul>
+        <li v-for="user in searchResults" :key="user.uid">{{ user.username }}</li>
+      </ul>
+      <p v-if="searchResults.length === 0 && searchQuery.length > 0">We couldn't find any users with that alias.</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, inject } from 'vue';
-import { debounce } from 'lodash';
+import { getDatabase, ref, query, orderByChild, startAt, endAt, limitToFirst, get } from 'firebase/database';
 
 export default {
-  setup() {
-    // Adjust the path based on your project structure
-    const { firestore } = inject('$firebase', { firestore: null });
-
-    const searchQuery = ref('');
-    const searchResults = ref([]);
-
-    const debouncedSearchUsers = debounce(() => {
-      searchUsers();
-    }, 300);
-
-    const searchUsers = () => {
-      if (!firestore) {
-        console.error('Firestore is not initialized.');
+  data() {
+    return {
+      searchQuery: '',
+      searchResults: [],
+      showResults: false,
+    };
+  },
+  methods: {
+    async searchUsers() {
+      if (this.searchQuery === '') {
+        this.searchResults = [];
+        this.showResults = false;
         return;
       }
-      const query = searchQuery.value.toLowerCase();
 
-      firestore
-        .collection('users')
-        .where('name', '>=', query)
-        .where('name', '<=', query + '\uf8ff')
-        .get()
-        .then((querySnapshot) => {
-          searchResults.value = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            name: doc.data().name,
-            // Add other user properties as needed
-          }));
-        })
-        .catch((error) => {
-          console.error('Error searching users:', error);
-        });
-    };
+      const db = getDatabase();
+      const usersRef = ref(db, 'usernames');
+      const queryRef = query(
+        usersRef,
+        orderByChild('username'),
+        startAt(this.searchQuery.toLowerCase()),
+        endAt(this.searchQuery.toLowerCase() + '\uf8ff'),
+        limitToFirst(5)
+      );
 
-    const openChat = (user) => {
-      // Handle opening the chat with the selected user
-      // You may want to emit an event or navigate to a chat component
-      console.log('Opening chat with:', user);
-    };
-
-    return {
-      searchQuery,
-      searchResults,
-      debouncedSearchUsers,
-      searchUsers,
-      openChat,
-    };
+      try {
+        const snapshot = await get(queryRef);
+        if (snapshot.exists()) {
+          const users = [];
+          snapshot.forEach((childSnapshot) => {
+            const user = childSnapshot.val();
+            users.push(user);
+          });
+          this.searchResults = users;
+          this.showResults = true;
+        } else {
+          this.searchResults = [];
+          this.showResults = false;
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    },
   },
 };
 </script>

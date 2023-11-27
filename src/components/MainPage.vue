@@ -8,6 +8,9 @@
       <ContactList :contacts="contacts" @open-chat="openChat" />
     </div>
     <div class="spacer"></div>
+    <div class="messaging-session">
+      <MessagingSession v-if="selectedContact" :contact="selectedContact" />
+    </div>
   </div>
 </template>
 
@@ -15,6 +18,8 @@
 import Header from './MainProfileHeader.vue';
 import SearchBar from './MainUserSearch.vue';
 import ContactList from './MainContactList.vue';
+import MessagingSession from './MessagingSession.vue';
+import { auth } from '@/main';
 import { inject } from 'vue';
 
 export default {
@@ -22,10 +27,11 @@ export default {
     Header,
     SearchBar,
     ContactList,
+    MessagingSession,
   },
   setup() {
     const user = inject('user', { userName: 'Default User', profilePictureUrl: 'default.jpg' });
-    const { auth } = inject('$firebase', { auth: null, firestore: null });
+
     const contacts = [
       { id: 1, name: 'User 1', profilePictureUrl: 'path-to-profile-picture' },
       { id: 2, name: 'User 2', profilePictureUrl: 'path-to-profile-picture' },
