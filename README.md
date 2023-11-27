@@ -14,8 +14,8 @@ npm install body-parser
 npm install cors
 npm install firebase-admin
 npm install crypto-browserify
-npm install vuex\
-npm install vue3-carousel
+npm install vuex
+npm install vue3-carousel\
 
 ```
 
