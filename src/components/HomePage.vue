@@ -3,11 +3,11 @@
   <div class="full-screen-background">
 
   <!--Legal Model-->
-  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" data-bs-backdrop="false">
+  <div class="modal fade" id="legalModal" tabindex="-1" aria-labelledby="legalModalLabel" aria-hidden="true" data-bs-backdrop="false">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="myModalLabel">Legal Information</h5>
+          <h5 class="modal-title" id="legalModalLabel">Legal Information</h5>
         </div>
         <div class="modal-body">
           <p>Various graphic assets taken from <a href="https://www.freepik.com/free-vector/halftone-background-with-circles_13295064.htm#query=website%20background&position=2&from_view=keyword&track=ais&uuid=1e020c6d-d1ae-48ea-bf3c-07c571085acb">Freepik</a></p>
@@ -54,7 +54,7 @@
     <div class="container-lg">
       <div class="row d-flex justify-content-center align-items-center">
         <div class="col-md-6" style="margin-bottom: 10px;">
-          <div class="card" @click="handleCardClick(card)" v-for="card in cards" :key="card.id" style="background-color: #007bff; width: 300px; height: 100px; margin: 20px; margin-bottom: 25px;">
+          <div class="card" @click="handleCardClick(card)" v-for="card in cards" :key="card.id" style="background-color: #007bff; width: 300px auto; height: 100px; margin: 20px; margin-bottom: 25px;">
             <div class="card-body">
               <h5 class="card-title font-weight-bold" style="user-select: none;">{{ card.title }}</h5>
               <p class="card-text" style="user-select: none;">{{ card.description }}</p>
@@ -69,7 +69,6 @@
       </div>
     </div>
 
-
   </div>
 </template>
 
@@ -79,6 +78,7 @@
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import Modal from 'bootstrap/js/dist/modal';
+import {inject} from 'vue';
 
 export default {
   components: {
@@ -88,20 +88,28 @@ export default {
     Navigation,
   },
   setup() {
+    const handleNavigate = inject('handleNavigate');
+
+    const navigateToLogin = () => {
+      // Trigger a page transition to the register page
+      handleNavigate('login');
+    };
+
     const handleCardClick = (card) => {
       switch (card.id) {
         case 1:
-          console.log("please1");
+            navigateToLogin();
           break;
         case 2:
-          new Modal(document.getElementById('myModal')).show();
+          new Modal(document.getElementById('legalModal')).show();
           break;
         default:
           console.log(card.title);
       }
     };
     return {
-      handleCardClick
+      handleCardClick,
+      navigateToLogin
     }
   },
   data() {

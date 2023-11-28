@@ -15,7 +15,6 @@ npm install cors
 npm install firebase-admin
 npm install crypto-browserify
 npm install vuex
-npm install vue3-carousel\
 
 ```
 

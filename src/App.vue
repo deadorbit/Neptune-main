@@ -5,7 +5,7 @@
     <AccountSetup v-if="showAccountSetup" @continueToFinalAccountSetup="handleContinueToFinalAccountSetup" @usernameStored="handleUsernameStored"></AccountSetup>
     <FinalAccountSetup v-if="showFinalAccountSetup" @finalAccountSetupComplete="handleFinalAccountSetupComplete"></FinalAccountSetup>
     <MainPage v-if="showMainPage" @logout="handleLogout"></MainPage>
-    <HomePage>HomePage</HomePage>
+    <HomePage v-if="showHomePage"></HomePage>
   </div>
 </template>
 
@@ -33,6 +33,7 @@ export default defineComponent({
     const showAccountSetup = ref(false);
     const showFinalAccountSetup = ref(false);
     const showMainPage = ref(false);
+    const showHomePage = ref(true);
 
     const handleLoggedIn = () => {
       showLogin.value = false;
@@ -74,10 +75,17 @@ export default defineComponent({
         showLogin.value = true;
         showRegister.value = false;
         showMainPage.value = false;
+        showHomePage.value = false;
       } else if (page === 'register') {
         showLogin.value = false;
         showRegister.value = true;
         showMainPage.value = false;
+        showHomePage.value = false;
+      } else if (page === 'home') {
+        showLogin.value = false;
+        showRegister.value = false;
+        showMainPage.value = false;
+        showHomePage.value = true;
       }
     };
 
@@ -94,6 +102,7 @@ export default defineComponent({
       showAccountSetup,
       showFinalAccountSetup,
       showMainPage,
+      showHomePage,
     };
   },
 });
